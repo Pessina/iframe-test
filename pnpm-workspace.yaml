@@ -1,0 +1,4 @@
+packages:
+  - 'shared-components'
+  - 'iframe-app'
+  - 'parent-app'

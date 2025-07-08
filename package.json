@@ -1,0 +1,18 @@
+{
+  "name": "iframe-test-workspace",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "dev": "concurrently \"pnpm --filter iframe-app dev\" \"pnpm --filter parent-app dev\"",
+    "build": "pnpm --filter shared-components build && pnpm --filter iframe-app build && pnpm --filter parent-app build",
+    "build:components": "pnpm --filter shared-components build"
+  },
+  "workspaces": [
+    "shared-components",
+    "iframe-app", 
+    "parent-app"
+  ],
+  "devDependencies": {
+    "concurrently": "^8.2.2"
+  }
+}

@@ -3,11 +3,15 @@
 import { useEffect, useState } from "react";
 
 export default function Home() {
+  const [mounted, setMounted] = useState(false);
   const [iframeUrl, setIframeUrl] = useState<string>("");
   const [theme, setTheme] = useState("solana");
   const [logoUrl, setLogoUrl] = useState("");
-  const [primaryColor, setPrimaryColor] = useState("#000000");
-  const [secondaryColor, setSecondaryColor] = useState("#16a34a");
+  const [brandName, setBrandName] = useState("");
+  const [primaryColor, setPrimaryColor] = useState("#9945ff");
+  const [secondaryColor, setSecondaryColor] = useState("#14f195");
+  const [backgroundColor, setBackgroundColor] = useState("#0a0a0a");
+  const [foregroundColor, setForegroundColor] = useState("#ffffff");
   const [walletInfo, setWalletInfo] = useState<{
     connected: boolean;
     publicKey?: string;
@@ -16,12 +20,21 @@ export default function Home() {
   const [lastTransaction, setLastTransaction] = useState<string | null>(null);
 
   useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  useEffect(() => {
+    if (!mounted) return;
+
     // Build iframe URL with query parameters
     const params = new URLSearchParams({
       theme,
       ...(logoUrl && { logo: encodeURIComponent(logoUrl) }),
+      ...(brandName && { brandName: encodeURIComponent(brandName) }),
       primary: encodeURIComponent(primaryColor),
       secondary: encodeURIComponent(secondaryColor),
+      background: encodeURIComponent(backgroundColor),
+      foreground: encodeURIComponent(foregroundColor),
     });
 
     const baseUrl =
@@ -63,7 +76,7 @@ export default function Home() {
 
     window.addEventListener("message", handleMessage);
     return () => window.removeEventListener("message", handleMessage);
-  }, [theme, logoUrl, primaryColor, secondaryColor]);
+  }, [theme, logoUrl, brandName, primaryColor, secondaryColor, backgroundColor, foregroundColor, mounted]);
 
   return (
     <div className="min-h-screen bg-slate-50 p-6">
@@ -81,8 +94,8 @@ export default function Home() {
 
         {/* Configuration Panel */}
         <div className="mb-6 bg-white rounded-lg shadow-sm border p-6">
-          <h2 className="text-lg font-semibold mb-4">Configuration Test</h2>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+          <h2 className="text-lg font-semibold mb-4">Theme Configuration</h2>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
             <div>
               <label className="block text-sm font-medium mb-2">Theme</label>
               <select
@@ -92,7 +105,18 @@ export default function Home() {
               >
                 <option value="solana">Solana</option>
                 <option value="ton">TON</option>
+                <option value="custom">Custom</option>
               </select>
+            </div>
+            <div>
+              <label className="block text-sm font-medium mb-2">Brand Name</label>
+              <input
+                type="text"
+                value={brandName}
+                onChange={(e) => setBrandName(e.target.value)}
+                placeholder="Custom Wallet"
+                className="w-full p-2 border rounded-lg text-sm"
+              />
             </div>
             <div>
               <label className="block text-sm font-medium mb-2">Logo URL</label>
@@ -100,14 +124,12 @@ export default function Home() {
                 type="text"
                 value={logoUrl}
                 onChange={(e) => setLogoUrl(e.target.value)}
-                placeholder="https://example.com/logo.png"
+                placeholder="https://cryptologos.cc/logos/solana-sol-logo.png"
                 className="w-full p-2 border rounded-lg text-sm"
               />
             </div>
             <div>
-              <label className="block text-sm font-medium mb-2">
-                Primary Color
-              </label>
+              <label className="block text-sm font-medium mb-2">Primary Color</label>
               <input
                 type="color"
                 value={primaryColor}
@@ -116,13 +138,29 @@ export default function Home() {
               />
             </div>
             <div>
-              <label className="block text-sm font-medium mb-2">
-                Secondary Color
-              </label>
+              <label className="block text-sm font-medium mb-2">Secondary Color</label>
               <input
                 type="color"
                 value={secondaryColor}
                 onChange={(e) => setSecondaryColor(e.target.value)}
+                className="w-full p-1 border rounded-lg h-10"
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-medium mb-2">Background Color</label>
+              <input
+                type="color"
+                value={backgroundColor}
+                onChange={(e) => setBackgroundColor(e.target.value)}
+                className="w-full p-1 border rounded-lg h-10"
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-medium mb-2">Text Color</label>
+              <input
+                type="color"
+                value={foregroundColor}
+                onChange={(e) => setForegroundColor(e.target.value)}
                 className="w-full p-1 border rounded-lg h-10"
               />
             </div>

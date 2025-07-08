@@ -1,0 +1,89 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --background: 0 0% 4%;
+    --foreground: 0 0% 98%;
+
+    --card: 0 0% 8%;
+    --card-foreground: 0 0% 98%;
+
+    --popover: 0 0% 8%;
+    --popover-foreground: 0 0% 98%;
+
+    --primary: 267 84% 81%;
+    --primary-foreground: 0 0% 9%;
+
+    --secondary: 142 69% 58%;
+    --secondary-foreground: 0 0% 9%;
+
+    --muted: 0 0% 15%;
+    --muted-foreground: 0 0% 63%;
+
+    --accent: 267 84% 81%;
+    --accent-foreground: 0 0% 9%;
+
+    --destructive: 0 62% 30%;
+    --destructive-foreground: 0 0% 98%;
+
+    --border: 0 0% 20%;
+    --input: 0 0% 20%;
+    --ring: 267 84% 81%;
+
+    --radius: 0.5rem;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+  body {
+    @apply bg-background text-foreground;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  }
+}
+
+/* Clean wallet adapter styles */
+.wallet-adapter-button {
+  @apply bg-primary text-primary-foreground border border-border px-6 py-3 text-sm rounded-lg font-medium transition-colors hover:bg-primary/90 disabled:bg-muted disabled:text-muted-foreground disabled:cursor-not-allowed;
+}
+
+.wallet-adapter-button:hover:not(:disabled) {
+  @apply bg-primary/90;
+}
+
+/* Wallet modal styles */
+.wallet-adapter-modal-wrapper {
+  @apply bg-black/50 z-50;
+}
+
+.wallet-adapter-modal {
+  @apply bg-card border border-border rounded-lg max-w-md w-full mx-4;
+}
+
+.wallet-adapter-modal-title {
+  @apply text-foreground text-xl font-semibold mb-4;
+}
+
+.wallet-adapter-modal-list {
+  @apply flex flex-col gap-2;
+}
+
+.wallet-adapter-modal-list-item {
+  @apply bg-muted border border-border rounded-lg p-3 flex items-center gap-3 cursor-pointer transition-colors hover:bg-muted/80;
+}
+
+.wallet-adapter-modal-list-item-name {
+  @apply text-foreground font-medium;
+}
+
+.wallet-adapter-modal-list-item-icon {
+  @apply w-6 h-6 rounded;
+}
+
+.wallet-adapter-modal-button-close {
+  @apply bg-muted text-foreground border-0 w-6 h-6 rounded cursor-pointer absolute top-4 right-4 hover:bg-muted/80;
+}
