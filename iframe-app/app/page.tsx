@@ -13,6 +13,14 @@ import {
   TransferForm,
   WalletConnection,
   ConnectPrompt,
+  TransactionHistory,
+  PortfolioOverview,
+  SettingsModal,
+  Tabs,
+  TabsContent,
+  TabsList,
+  TabsTrigger,
+  Button,
   useTheme
 } from '@iframe-test/shared-components';
 
@@ -27,6 +35,54 @@ function HomePage() {
   const [amount, setAmount] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [message, setMessage] = useState('');
+  const [transactions, setTransactions] = useState([
+    {
+      signature: '5VfYJQKYGzGjdHHvv5YLRzTMZ8Mw9A7QKYt2w5VK4FN5K5Mw9A7QKYt2w5VK4FN5',
+      type: 'send' as const,
+      amount: 0.5,
+      timestamp: new Date(Date.now() - 3600000),
+      status: 'confirmed' as const,
+      recipient: '7XgE5JvKYzGjdHHvv5YLRzTMZ8Mw9A7QKYt2w5VK4FN5'
+    },
+    {
+      signature: '8VgF6KQKYGzGjdHHvv5YLRzTMZ8Mw9A7QKYt2w5VK4FN5K5Mw9A7QKYt2w5VK4FN5',
+      type: 'receive' as const,
+      amount: 1.2,
+      timestamp: new Date(Date.now() - 7200000),
+      status: 'confirmed' as const,
+    },
+    {
+      signature: '9WhG7LRKYGzGjdHHvv5YLRzTMZ8Mw9A7QKYt2w5VK4FN5K5Mw9A7QKYt2w5VK4FN5',
+      type: 'send' as const,
+      amount: 0.1,
+      timestamp: new Date(Date.now() - 86400000),
+      status: 'pending' as const,
+      recipient: '2XhF8MvKYzGjdHHvv5YLRzTMZ8Mw9A7QKYt2w5VK4FN5'
+    }
+  ]);
+
+  const portfolioData = {
+    totalValue: 2486.75,
+    change24h: 5.67,
+    tokens: [
+      {
+        symbol: 'SOL',
+        name: 'Solana',
+        balance: 12.5,
+        value: 2250.00,
+        change24h: 6.2,
+        percentage: 90.5
+      },
+      {
+        symbol: 'USDC',
+        name: 'USD Coin',
+        balance: 236.75,
+        value: 236.75,
+        change24h: 0.01,
+        percentage: 9.5
+      }
+    ]
+  };
 
   const { theme, updateTheme } = useTheme();
 
@@ -90,6 +146,17 @@ function HomePage() {
       const signature = await sendTransaction(transaction, connection);
       setMessage(`✅ Transfer successful: ${signature.slice(0, 8)}...`);
       
+      // Add to transaction history
+      const newTransaction = {
+        signature,
+        type: 'send' as const,
+        amount: parseFloat(amount),
+        timestamp: new Date(),
+        status: 'confirmed' as const,
+        recipient
+      };
+      setTransactions(prev => [newTransaction, ...prev]);
+      
       // Send message to parent
       window.parent.postMessage({
         type: 'transaction-success',
@@ -137,42 +204,125 @@ function HomePage() {
   }
 
   return (
-    <div className="min-h-screen bg-background text-foreground p-6">
-      <div className="max-w-md mx-auto space-y-6">
+    <div className="min-h-screen bg-background text-foreground">
+      {/* Mobile-First Responsive Layout */}
+      <div className="container mx-auto p-4 sm:p-6 lg:p-8 max-w-7xl">
         
-        <WalletHeader 
-          theme={theme}
-          onThemeSwitch={handleThemeSwitch}
-        />
-
-        <WalletConnection 
-          connected={connected}
-          walletName={wallet?.adapter.name}
-        >
-          <WalletMultiButton />
-        </WalletConnection>
-
-        {publicKey && (
-          <WalletInfo 
-            publicKey={publicKey.toBase58()}
-            balance={balance}
+        {/* Header with Settings */}
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6">
+          <WalletHeader 
+            theme={theme}
+            onThemeSwitch={handleThemeSwitch}
           />
-        )}
+          <div className="flex items-center gap-2">
+            <SettingsModal>
+              <Button variant="outline" size="sm">
+                Settings
+              </Button>
+            </SettingsModal>
+          </div>
+        </div>
 
-        {publicKey && (
-          <TransferForm
-            recipient={recipient}
-            amount={amount}
-            isLoading={isLoading}
-            message={message}
-            onRecipientChange={setRecipient}
-            onAmountChange={setAmount}
-            onSubmit={handleTransfer}
-          />
-        )}
+        {/* Wallet Connection Section */}
+        <div className="mb-6">
+          <WalletConnection 
+            connected={connected}
+            walletName={wallet?.adapter.name}
+          >
+            <WalletMultiButton />
+          </WalletConnection>
+        </div>
 
-        {!publicKey && (
+        {!publicKey ? (
+          /* Connect Prompt for Disconnected State */
           <ConnectPrompt />
+        ) : (
+          /* Main Dashboard - Connected State */
+          <div className="space-y-6">
+            
+            {/* Portfolio Overview - Full Width on Mobile, Side Panel on Desktop */}
+            <div className="lg:hidden">
+              <PortfolioOverview
+                totalValue={portfolioData.totalValue}
+                change24h={portfolioData.change24h}
+                tokens={portfolioData.tokens}
+              />
+            </div>
+
+            {/* Main Content Grid */}
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+              
+              {/* Left Column - Main Actions */}
+              <div className="lg:col-span-2 space-y-6">
+                
+                {/* Wallet Info */}
+                <WalletInfo 
+                  publicKey={publicKey.toBase58()}
+                  balance={balance}
+                />
+
+                {/* Tabbed Interface for Mobile, Separate Cards for Desktop */}
+                <div className="md:hidden">
+                  <Tabs defaultValue="transfer" className="w-full">
+                    <TabsList className="grid w-full grid-cols-2">
+                      <TabsTrigger value="transfer">Transfer</TabsTrigger>
+                      <TabsTrigger value="history">History</TabsTrigger>
+                    </TabsList>
+                    <TabsContent value="transfer" className="mt-4">
+                      <TransferForm
+                        recipient={recipient}
+                        amount={amount}
+                        isLoading={isLoading}
+                        message={message}
+                        onRecipientChange={setRecipient}
+                        onAmountChange={setAmount}
+                        onSubmit={handleTransfer}
+                      />
+                    </TabsContent>
+                    <TabsContent value="history" className="mt-4">
+                      <TransactionHistory
+                        transactions={transactions}
+                        onRefresh={() => {
+                          // Mock refresh
+                          console.log('Refreshing transactions...');
+                        }}
+                      />
+                    </TabsContent>
+                  </Tabs>
+                </div>
+
+                {/* Desktop Layout - Separate Cards */}
+                <div className="hidden md:block space-y-6">
+                  <TransferForm
+                    recipient={recipient}
+                    amount={amount}
+                    isLoading={isLoading}
+                    message={message}
+                    onRecipientChange={setRecipient}
+                    onAmountChange={setAmount}
+                    onSubmit={handleTransfer}
+                  />
+                  
+                  <TransactionHistory
+                    transactions={transactions}
+                    onRefresh={() => {
+                      // Mock refresh
+                      console.log('Refreshing transactions...');
+                    }}
+                  />
+                </div>
+              </div>
+
+              {/* Right Column - Portfolio (Desktop Only) */}
+              <div className="hidden lg:block">
+                <PortfolioOverview
+                  totalValue={portfolioData.totalValue}
+                  change24h={portfolioData.change24h}
+                  tokens={portfolioData.tokens}
+                />
+              </div>
+            </div>
+          </div>
         )}
       </div>
     </div>

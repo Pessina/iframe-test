@@ -76,18 +76,28 @@ export default function Home() {
 
     window.addEventListener("message", handleMessage);
     return () => window.removeEventListener("message", handleMessage);
-  }, [theme, logoUrl, brandName, primaryColor, secondaryColor, backgroundColor, foregroundColor, mounted]);
+  }, [
+    theme,
+    logoUrl,
+    brandName,
+    primaryColor,
+    secondaryColor,
+    backgroundColor,
+    foregroundColor,
+    mounted,
+  ]);
 
   return (
     <div className="min-h-screen bg-slate-50 p-6">
-      <div className="max-w-6xl mx-auto">
+      <div className="max-w-7xl mx-auto">
         {/* Header */}
         <header className="mb-8">
           <h1 className="text-2xl font-bold mb-2 text-slate-900">
-            iFrame dApp POC
+            Responsive iFrame dApp Dashboard
           </h1>
           <p className="text-slate-600">
-            Testing iframe integration requirements
+            Testing responsive behavior across different container sizes - Full
+            desktop, constrained tablet, and mobile layouts
           </p>
           <div className="h-px bg-slate-200 mt-4"></div>
         </header>
@@ -109,7 +119,9 @@ export default function Home() {
               </select>
             </div>
             <div>
-              <label className="block text-sm font-medium mb-2">Brand Name</label>
+              <label className="block text-sm font-medium mb-2">
+                Brand Name
+              </label>
               <input
                 type="text"
                 value={brandName}
@@ -129,7 +141,9 @@ export default function Home() {
               />
             </div>
             <div>
-              <label className="block text-sm font-medium mb-2">Primary Color</label>
+              <label className="block text-sm font-medium mb-2">
+                Primary Color
+              </label>
               <input
                 type="color"
                 value={primaryColor}
@@ -138,7 +152,9 @@ export default function Home() {
               />
             </div>
             <div>
-              <label className="block text-sm font-medium mb-2">Secondary Color</label>
+              <label className="block text-sm font-medium mb-2">
+                Secondary Color
+              </label>
               <input
                 type="color"
                 value={secondaryColor}
@@ -147,7 +163,9 @@ export default function Home() {
               />
             </div>
             <div>
-              <label className="block text-sm font-medium mb-2">Background Color</label>
+              <label className="block text-sm font-medium mb-2">
+                Background Color
+              </label>
               <input
                 type="color"
                 value={backgroundColor}
@@ -156,7 +174,9 @@ export default function Home() {
               />
             </div>
             <div>
-              <label className="block text-sm font-medium mb-2">Text Color</label>
+              <label className="block text-sm font-medium mb-2">
+                Text Color
+              </label>
               <input
                 type="color"
                 value={foregroundColor}
@@ -199,24 +219,61 @@ export default function Home() {
           )}
         </div>
 
-        {/* iFrame */}
+        {/* Dual iFrame Layout */}
+
+        {/* Full-Size iFrame */}
         <div className="bg-white rounded-lg shadow-sm border overflow-hidden">
           <div className="p-4 border-b bg-gray-50">
             <h2 className="font-semibold text-sm text-gray-700">
-              dApp iFrame - {theme.toUpperCase()} Theme
+              Full Size - {theme.toUpperCase()} Theme
             </h2>
+            <p className="text-xs text-gray-500 mt-1">
+              Shows desktop layout with sidebar
+            </p>
           </div>
 
           {iframeUrl && (
             <iframe
               src={iframeUrl}
-              title="dApp POC"
-              className="w-full h-[600px] border-0"
+              title="dApp POC - Full Size"
+              className="w-full h-[700px] border-0"
               sandbox="allow-scripts allow-same-origin allow-forms allow-popups allow-popups-to-escape-sandbox allow-modals"
               allow="clipboard-read; clipboard-write"
               referrerPolicy="strict-origin-when-cross-origin"
             />
           )}
+        </div>
+
+        {/* Mobile Preview */}
+        <div className="mt-6 bg-white rounded-lg shadow-sm border overflow-hidden">
+          <div className="p-4 border-b bg-gray-50">
+            <h2 className="font-semibold text-sm text-gray-700">
+              Mobile Preview - {theme.toUpperCase()} Theme
+            </h2>
+            <p className="text-xs text-gray-500 mt-1">
+              iPhone-like container showing mobile responsive behavior
+            </p>
+          </div>
+
+          <div className="flex justify-center bg-gradient-to-b from-gray-100 to-gray-200 p-8">
+            <div className="bg-black rounded-[2.5rem] p-2 shadow-2xl">
+              <div
+                className="bg-white rounded-[2rem] overflow-hidden"
+                style={{ width: "375px", height: "600px" }}
+              >
+                {iframeUrl && (
+                  <iframe
+                    src={iframeUrl}
+                    title="dApp POC - Mobile"
+                    className="w-full h-full border-0"
+                    sandbox="allow-scripts allow-same-origin allow-forms allow-popups allow-popups-to-escape-sandbox allow-modals"
+                    allow="clipboard-read; clipboard-write"
+                    referrerPolicy="strict-origin-when-cross-origin"
+                  />
+                )}
+              </div>
+            </div>
+          </div>
         </div>
       </div>
     </div>
