@@ -19,11 +19,18 @@ export * from "./components/wallet/transaction-history";
 export * from "./components/wallet/portfolio-overview";
 export * from "./components/wallet/settings-modal";
 
-// Theme Components
+// Theme Components (Legacy - for backward compatibility)
 export * from "./components/theme/theme-provider";
+
+// Whitelabel Components (New Standard)
+export * from "./components/whitelabel/whitelabel-controls";
 
 // Utilities
 export * from "./lib/utils";
+export * from "./lib/whitelabel";
+
+// Hooks
+export * from "./hooks/useWhitelabel";
 
 // Styles - CSS file needs to be imported separately
 import "./styles/globals.css";

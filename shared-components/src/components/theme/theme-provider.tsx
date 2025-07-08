@@ -1,32 +1,27 @@
+// Legacy theme provider - deprecated, use whitelabel API instead
 import * as React from "react";
-import { ThemeConfig, applyTheme } from "../../lib/utils";
 
 interface ThemeContextType {
-  theme: ThemeConfig;
-  updateTheme: (newTheme: ThemeConfig) => void;
+  theme: any;
+  updateTheme: (newTheme: any) => void;
 }
 
 const ThemeContext = React.createContext<ThemeContextType | undefined>(undefined);
 
 interface ThemeProviderProps {
   children: React.ReactNode;
-  initialTheme: ThemeConfig;
+  initialTheme?: any;
 }
 
 export const ThemeProvider: React.FC<ThemeProviderProps> = ({
   children,
-  initialTheme,
+  initialTheme = {},
 }) => {
-  const [theme, setTheme] = React.useState<ThemeConfig>(initialTheme);
+  const [theme, setTheme] = React.useState(initialTheme);
 
-  const updateTheme = React.useCallback((newTheme: ThemeConfig) => {
+  const updateTheme = React.useCallback((newTheme: any) => {
     setTheme(newTheme);
-    applyTheme(newTheme);
   }, []);
-
-  React.useEffect(() => {
-    applyTheme(theme);
-  }, [theme]);
 
   return (
     <ThemeContext.Provider value={{ theme, updateTheme }}>

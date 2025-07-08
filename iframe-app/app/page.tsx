@@ -6,9 +6,8 @@ import { LAMPORTS_PER_SOL, PublicKey, Transaction, SystemProgram } from '@solana
 import { useSearchParams } from 'next/navigation';
 import { WalletMultiButton } from '@solana/wallet-adapter-react-ui';
 import {
-  ThemeProvider,
-  parseThemeFromUrl,
-  WalletHeader,
+  decodeWhitelabelConfig,
+  applyWhitelabelConfig,
   WalletInfo,
   TransferForm,
   WalletConnection,
@@ -20,8 +19,7 @@ import {
   TabsContent,
   TabsList,
   TabsTrigger,
-  Button,
-  useTheme
+  Button
 } from '@iframe-test/shared-components';
 
 function HomePage() {
@@ -84,7 +82,9 @@ function HomePage() {
     ]
   };
 
-  const { theme, updateTheme } = useTheme();
+  const [whitelabelConfig, setWhitelabelConfig] = useState(() => 
+    decodeWhitelabelConfig(new URLSearchParams())
+  );
 
   useEffect(() => {
     setMounted(true);
@@ -93,9 +93,10 @@ function HomePage() {
   useEffect(() => {
     if (!mounted) return;
     
-    const newTheme = parseThemeFromUrl(searchParams);
-    updateTheme(newTheme);
-  }, [searchParams, mounted, updateTheme]);
+    const config = decodeWhitelabelConfig(searchParams);
+    setWhitelabelConfig(config);
+    applyWhitelabelConfig(config);
+  }, [searchParams, mounted]);
 
   useEffect(() => {
     if (!mounted || !publicKey) {
@@ -182,12 +183,9 @@ function HomePage() {
   };
 
   const handleThemeSwitch = () => {
-    const newTheme = theme.theme === 'solana' ? 'ton' : 'solana';
-    
-    // Send message to parent to handle the navigation
+    // For whitelabel iframe, theme switching is handled by parent
     window.parent.postMessage({
-      type: 'navigate',
-      theme: newTheme
+      type: 'toggle-theme'
     }, '*');
   };
 
@@ -210,10 +208,26 @@ function HomePage() {
         
         {/* Header with Settings */}
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6">
-          <WalletHeader 
-            theme={theme}
-            onThemeSwitch={handleThemeSwitch}
-          />
+          <div className="text-center">
+            <div className="flex items-center justify-center space-x-3 mb-4">
+              {whitelabelConfig.brand?.logo ? (
+                <img
+                  src={whitelabelConfig.brand.logo}
+                  alt="Logo"
+                  className="h-8 w-8 rounded"
+                  width={32}
+                  height={32}
+                />
+              ) : (
+                <div className="h-8 w-8 bg-[var(--color-primary,#2563eb)] text-white rounded flex items-center justify-center font-bold text-sm">
+                  W
+                </div>
+              )}
+              <h1 className="text-xl font-semibold">
+                {whitelabelConfig.brand?.name || "Wallet"}
+              </h1>
+            </div>
+          </div>
           <div className="flex items-center gap-2">
             <SettingsModal>
               <Button variant="outline" size="sm">
@@ -332,13 +346,14 @@ function HomePage() {
 export default function Home() {
   return (
     <Suspense fallback={
-      <div className="min-h-screen bg-background flex items-center justify-center">
-        <div className="text-muted-foreground">Loading...</div>
+      <div className="min-h-screen flex items-center justify-center" style={{
+        backgroundColor: 'var(--color-background, #ffffff)',
+        color: 'var(--color-text, #000000)'
+      }}>
+        <div>Loading...</div>
       </div>
     }>
-      <ThemeProvider initialTheme={{ theme: 'solana', colors: { primary: '267 84% 81%', secondary: '142 69% 58%', background: '0 0% 4%', foreground: '0 0% 98%', muted: '0 0% 15%', accent: '267 84% 81%', border: '0 0% 20%', ring: '267 84% 81%' } }}>
-        <HomePage />
-      </ThemeProvider>
+      <HomePage />
     </Suspense>
   );
 }

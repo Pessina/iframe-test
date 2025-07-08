@@ -1,25 +1,25 @@
+// Legacy wallet header - deprecated, use direct JSX in iframe app instead
 import * as React from "react";
 import { Button } from "../ui/button";
 import { cn } from "../../lib/utils";
-import { type ThemeConfig } from "../../lib/utils";
 
 interface WalletHeaderProps {
-  theme: ThemeConfig;
+  theme?: any;
   onThemeSwitch?: () => void;
   className?: string;
 }
 
 export const WalletHeader: React.FC<WalletHeaderProps> = ({
-  theme,
+  theme = {},
   onThemeSwitch,
   className,
 }) => {
   return (
     <div className={cn("text-center", className)}>
       <div className="flex items-center justify-center space-x-3 mb-4">
-        {theme.logo ? (
+        {theme.brand?.logo ? (
           <img
-            src={theme.logo}
+            src={theme.brand.logo}
             alt="Logo"
             className="h-8 w-8 rounded"
             width={32}
@@ -27,11 +27,11 @@ export const WalletHeader: React.FC<WalletHeaderProps> = ({
           />
         ) : (
           <div className="h-8 w-8 bg-primary text-primary-foreground rounded flex items-center justify-center font-bold text-sm">
-            {theme.theme === "solana" ? "S" : theme.theme === "ton" ? "T" : "C"}
+            W
           </div>
         )}
         <h1 className="text-xl font-semibold">
-          {theme.brandName || `${theme.theme.toUpperCase()} Wallet`}
+          Wallet
         </h1>
       </div>
       
@@ -42,7 +42,7 @@ export const WalletHeader: React.FC<WalletHeaderProps> = ({
           onClick={onThemeSwitch}
           className="text-sm text-muted-foreground hover:text-foreground"
         >
-          Switch to {theme.theme === "solana" ? "TON" : "Solana"}
+          Switch Theme
         </Button>
       )}
     </div>

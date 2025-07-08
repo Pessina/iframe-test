@@ -4,51 +4,77 @@
 
 @layer base {
   :root {
-    --background: 0 0% 4%;
-    --foreground: 0 0% 98%;
-
-    --card: 0 0% 8%;
-    --card-foreground: 0 0% 98%;
-
-    --popover: 0 0% 8%;
-    --popover-foreground: 0 0% 98%;
-
-    --primary: 267 84% 81%;
-    --primary-foreground: 0 0% 9%;
-
-    --secondary: 142 69% 58%;
-    --secondary-foreground: 0 0% 9%;
-
-    --muted: 0 0% 15%;
-    --muted-foreground: 0 0% 63%;
-
-    --accent: 267 84% 81%;
-    --accent-foreground: 0 0% 9%;
-
-    --destructive: 0 62% 30%;
+    /* Whitelabel API - Industry standard naming */
+    --color-primary: #2563eb;
+    --color-background: #ffffff;
+    --color-text: #000000;
+    --border-radius: 6px;
+    
+    /* Shadcn/ui defaults (light theme) */
+    --background: 0 0% 100%;
+    --foreground: 240 10% 3.9%;
+    --card: 0 0% 100%;
+    --card-foreground: 240 10% 3.9%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 240 10% 3.9%;
+    --primary: 240 5.9% 10%;
+    --primary-foreground: 0 0% 98%;
+    --secondary: 240 4.8% 95.9%;
+    --secondary-foreground: 240 5.9% 10%;
+    --muted: 240 4.8% 95.9%;
+    --muted-foreground: 240 3.8% 46.1%;
+    --accent: 240 4.8% 95.9%;
+    --accent-foreground: 240 5.9% 10%;
+    --destructive: 0 84.2% 60.2%;
     --destructive-foreground: 0 0% 98%;
+    --border: 240 5.9% 90%;
+    --input: 240 5.9% 90%;
+    --ring: 240 5.9% 10%;
+    --radius: var(--border-radius);
+  }
 
-    --border: 0 0% 20%;
-    --input: 0 0% 20%;
-    --ring: 267 84% 81%;
-
-    --radius: 0.5rem;
+  /* Dark theme overrides */
+  .theme-dark {
+    --color-background: #000000;
+    --color-text: #ffffff;
+    
+    --background: 240 10% 3.9%;
+    --foreground: 0 0% 98%;
+    --card: 240 10% 3.9%;
+    --card-foreground: 0 0% 98%;
+    --popover: 240 10% 3.9%;
+    --popover-foreground: 0 0% 98%;
+    --primary: 0 0% 98%;
+    --primary-foreground: 240 5.9% 10%;
+    --secondary: 240 3.7% 15.9%;
+    --secondary-foreground: 0 0% 98%;
+    --muted: 240 3.7% 15.9%;
+    --muted-foreground: 240 5% 64.9%;
+    --accent: 240 3.7% 15.9%;
+    --accent-foreground: 0 0% 98%;
+    --destructive: 0 62.8% 30.6%;
+    --destructive-foreground: 0 0% 98%;
+    --border: 240 3.7% 15.9%;
+    --input: 240 3.7% 15.9%;
+    --ring: 240 4.9% 83.9%;
   }
 }
 
 @layer base {
   * {
-    @apply border-border;
+    border-color: hsl(var(--border));
   }
   body {
-    @apply bg-background text-foreground;
+    background-color: var(--color-background);
+    color: var(--color-text);
     font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
   }
 }
 
 /* Clean wallet adapter styles */
 .wallet-adapter-button {
-  @apply bg-primary text-primary-foreground border border-border px-6 py-3 text-sm rounded-lg font-medium transition-colors hover:bg-primary/90 disabled:bg-muted disabled:text-muted-foreground disabled:cursor-not-allowed;
+  @apply bg-primary text-primary-foreground border px-6 py-3 text-sm rounded-lg font-medium transition-colors hover:bg-primary/90 disabled:bg-muted disabled:text-muted-foreground disabled:cursor-not-allowed;
+  border-color: hsl(var(--border));
 }
 
 .wallet-adapter-button:hover:not(:disabled) {
@@ -61,7 +87,8 @@
 }
 
 .wallet-adapter-modal {
-  @apply bg-card border border-border rounded-lg max-w-md w-full mx-4;
+  @apply bg-card border rounded-lg max-w-md w-full mx-4;
+  border-color: hsl(var(--border));
 }
 
 .wallet-adapter-modal-title {
@@ -73,7 +100,8 @@
 }
 
 .wallet-adapter-modal-list-item {
-  @apply bg-muted border border-border rounded-lg p-3 flex items-center gap-3 cursor-pointer transition-colors hover:bg-muted/80;
+  @apply bg-muted border rounded-lg p-3 flex items-center gap-3 cursor-pointer transition-colors hover:bg-muted/80;
+  border-color: hsl(var(--border));
 }
 
 .wallet-adapter-modal-list-item-name {
