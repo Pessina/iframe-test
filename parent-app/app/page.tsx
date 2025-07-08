@@ -98,9 +98,68 @@ export default function Home() {
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100">
       <div className="max-w-7xl mx-auto px-6 py-8">
-        <div className="grid grid-cols-1 xl:grid-cols-5 gap-8">
+        {/* Desktop Preview - Full Width */}
+        <div className="space-y-6">
+          {/* Device Selector */}
+          <Card>
+            <CardHeader className="pb-4">
+              <div className="flex items-center justify-between">
+                <CardTitle className="flex items-center gap-2">
+                  <Monitor className="h-5 w-5" />
+                  Live Preview
+                </CardTitle>
+                <div className="flex items-center gap-2">
+                  <Badge variant="outline" className="text-xs">
+                    {whitelabel.config.theme || "light"} theme
+                  </Badge>
+                  <Badge variant="outline" className="text-xs">
+                    {whitelabel.config.brand?.name || "Default"}
+                  </Badge>
+                </div>
+              </div>
+              <CardDescription>
+                Real-time preview of your whitelabeled iframe integration
+              </CardDescription>
+            </CardHeader>
+          </Card>
+
+          {/* Desktop Preview */}
+          <Card className="overflow-hidden">
+            <CardHeader className="pb-3">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-2">
+                  <Monitor className="h-4 w-4 text-slate-600" />
+                  <span className="font-medium text-sm">Desktop View</span>
+                </div>
+                <div className="flex items-center gap-2 text-xs text-slate-500">
+                  <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
+                  1920×1080
+                </div>
+              </div>
+            </CardHeader>
+            <CardContent className="p-0">
+              <div className="bg-slate-100 p-4">
+                <div className="bg-white rounded-lg shadow-lg overflow-hidden border">
+                  {iframeUrl && (
+                    <iframe
+                      src={iframeUrl}
+                      title="Desktop Preview"
+                      className="w-full h-[600px] border-0"
+                      sandbox="allow-scripts allow-same-origin allow-forms allow-popups allow-popups-to-escape-sandbox allow-modals"
+                      allow="clipboard-read; clipboard-write"
+                      referrerPolicy="strict-origin-when-cross-origin"
+                    />
+                  )}
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+        </div>
+
+        {/* Configuration Sidebar and Mobile Preview */}
+        <div className="grid grid-cols-1 xl:grid-cols-2 gap-8">
           {/* Configuration Sidebar */}
-          <div className="xl:col-span-2 space-y-6">
+          <div className="space-y-6">
             <WhitelabelControls whitelabel={whitelabel} />
 
             {/* Status Cards */}
@@ -157,64 +216,8 @@ export default function Home() {
             </div>
           </div>
 
-          {/* Preview Area */}
-          <div className="xl:col-span-3 space-y-6">
-            {/* Device Selector */}
-            <Card>
-              <CardHeader className="pb-4">
-                <div className="flex items-center justify-between">
-                  <CardTitle className="flex items-center gap-2">
-                    <Monitor className="h-5 w-5" />
-                    Live Preview
-                  </CardTitle>
-                  <div className="flex items-center gap-2">
-                    <Badge variant="outline" className="text-xs">
-                      {whitelabel.config.theme || "light"} theme
-                    </Badge>
-                    <Badge variant="outline" className="text-xs">
-                      {whitelabel.config.brand?.name || "Default"}
-                    </Badge>
-                  </div>
-                </div>
-                <CardDescription>
-                  Real-time preview of your whitelabeled iframe integration
-                </CardDescription>
-              </CardHeader>
-            </Card>
-
-            {/* Desktop Preview */}
-            <Card className="overflow-hidden">
-              <CardHeader className="pb-3">
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-2">
-                    <Monitor className="h-4 w-4 text-slate-600" />
-                    <span className="font-medium text-sm">Desktop View</span>
-                  </div>
-                  <div className="flex items-center gap-2 text-xs text-slate-500">
-                    <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
-                    1920×1080
-                  </div>
-                </div>
-              </CardHeader>
-              <CardContent className="p-0">
-                <div className="bg-slate-100 p-4">
-                  <div className="bg-white rounded-lg shadow-lg overflow-hidden border">
-                    {iframeUrl && (
-                      <iframe
-                        src={iframeUrl}
-                        title="Desktop Preview"
-                        className="w-full h-[600px] border-0"
-                        sandbox="allow-scripts allow-same-origin allow-forms allow-popups allow-popups-to-escape-sandbox allow-modals"
-                        allow="clipboard-read; clipboard-write"
-                        referrerPolicy="strict-origin-when-cross-origin"
-                      />
-                    )}
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-
-            {/* Mobile Preview */}
+          {/* Mobile Preview - Simplified */}
+          <div className="hidden xl:block">
             <Card className="overflow-hidden">
               <CardHeader className="pb-3">
                 <div className="flex items-center justify-between">
@@ -229,36 +232,18 @@ export default function Home() {
                 </div>
               </CardHeader>
               <CardContent className="p-0">
-                <div className="bg-gradient-to-b from-slate-100 to-slate-200 p-8 flex justify-center">
-                  <div className="relative">
-                    {/* iPhone Frame */}
-                    <div className="bg-black rounded-[2.5rem] p-2 shadow-2xl">
-                      <div className="bg-slate-900 rounded-[2rem] p-1">
-                        <div className="bg-white rounded-[1.75rem] overflow-hidden relative">
-                          {/* Notch */}
-                          <div className="absolute top-0 left-1/2 transform -translate-x-1/2 w-24 h-6 bg-black rounded-b-2xl z-10"></div>
-                          <div style={{ width: "375px", height: "600px" }}>
-                            {iframeUrl && (
-                              <iframe
-                                src={iframeUrl}
-                                title="Mobile Preview"
-                                className="w-full h-full border-0"
-                                sandbox="allow-scripts allow-same-origin allow-forms allow-popups allow-popups-to-escape-sandbox allow-modals"
-                                allow="clipboard-read; clipboard-write"
-                                referrerPolicy="strict-origin-when-cross-origin"
-                              />
-                            )}
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-
-                    {/* Device Label */}
-                    <div className="absolute -bottom-4 left-1/2 transform -translate-x-1/2">
-                      <Badge variant="secondary" className="text-xs">
-                        iPhone 14 Pro
-                      </Badge>
-                    </div>
+                <div className="bg-slate-100 p-4 flex justify-center">
+                  <div className="bg-white rounded-lg shadow-lg overflow-hidden border" style={{ width: "375px", height: "600px" }}>
+                    {iframeUrl && (
+                      <iframe
+                        src={iframeUrl}
+                        title="Mobile Preview"
+                        className="w-full h-full border-0"
+                        sandbox="allow-scripts allow-same-origin allow-forms allow-popups allow-popups-to-escape-sandbox allow-modals"
+                        allow="clipboard-read; clipboard-write"
+                        referrerPolicy="strict-origin-when-cross-origin"
+                      />
+                    )}
                   </div>
                 </div>
               </CardContent>
