@@ -1,56 +1,86 @@
 'use client';
 
-import { useEffect, useState } from 'react';
-import Image from 'next/image';
+import { useEffect, useState, Suspense } from 'react';
+import { useWallet, useConnection } from '@solana/wallet-adapter-react';
+import { LAMPORTS_PER_SOL, PublicKey, Transaction, SystemProgram } from '@solana/web3.js';
 import WalletConnection from './components/WalletConnection';
 import { useSearchParams } from 'next/navigation';
 
-export default function Home() {
+function HomePage() {
   const searchParams = useSearchParams();
+  const { publicKey, sendTransaction } = useWallet();
+  const { connection } = useConnection();
+  
   const [theme, setTheme] = useState<'solana' | 'ton'>('solana');
   const [logoUrl, setLogoUrl] = useState<string | null>(null);
-  const [primaryColor, setPrimaryColor] = useState<string>('#9945FF');
-  const [secondaryColor, setSecondaryColor] = useState<string>('#14F195');
+  const [balance, setBalance] = useState<number | null>(null);
+  const [recipient, setRecipient] = useState('');
+  const [amount, setAmount] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
+  const [message, setMessage] = useState('');
 
   useEffect(() => {
-    // Parse query parameters
     const themeParam = searchParams.get('theme');
     const logoParam = searchParams.get('logo');
-    const primaryParam = searchParams.get('primary');
-    const secondaryParam = searchParams.get('secondary');
 
-    if (themeParam === 'ton') {
-      setTheme('ton');
-      setPrimaryColor('#0098EA');
-      setSecondaryColor('#1AC8FF');
+    if (themeParam === 'ton') setTheme('ton');
+    if (logoParam) setLogoUrl(decodeURIComponent(logoParam));
+  }, [searchParams]);
+
+  useEffect(() => {
+    if (publicKey) {
+      // Get balance
+      connection.getBalance(publicKey).then(balance => {
+        setBalance(balance / LAMPORTS_PER_SOL);
+      });
+    } else {
+      setBalance(null);
     }
+  }, [publicKey, connection]);
 
-    if (logoParam) {
-      setLogoUrl(decodeURIComponent(logoParam));
+  const handleTransfer = async () => {
+    if (!publicKey || !recipient || !amount) return;
+
+    setIsLoading(true);
+    setMessage('');
+
+    try {
+      const recipientPubkey = new PublicKey(recipient);
+      const lamports = parseFloat(amount) * LAMPORTS_PER_SOL;
+
+      const transaction = new Transaction().add(
+        SystemProgram.transfer({
+          fromPubkey: publicKey,
+          toPubkey: recipientPubkey,
+          lamports,
+        })
+      );
+
+      const signature = await sendTransaction(transaction, connection);
+      setMessage(`✅ Transfer successful: ${signature.slice(0, 8)}...`);
+      
+      // Send message to parent
+      window.parent.postMessage({
+        type: 'transaction-success',
+        signature
+      }, '*');
+      
+      // Clear form and refresh balance
+      setRecipient('');
+      setAmount('');
+      setTimeout(() => {
+        if (publicKey) {
+          connection.getBalance(publicKey).then(balance => {
+            setBalance(balance / LAMPORTS_PER_SOL);
+          });
+        }
+      }, 1000);
+
+    } catch (error) {
+      setMessage(`❌ Transfer failed: ${error instanceof Error ? error.message : 'Unknown error'}`);
+    } finally {
+      setIsLoading(false);
     }
-
-    if (primaryParam) {
-      setPrimaryColor(decodeURIComponent(primaryParam));
-    }
-
-    if (secondaryParam) {
-      setSecondaryColor(decodeURIComponent(secondaryParam));
-    }
-
-    // Apply CSS variables
-    document.documentElement.style.setProperty('--primary-color', primaryColor);
-    document.documentElement.style.setProperty('--secondary-color', secondaryColor);
-    
-    // Generate color tones
-    generateColorTones(primaryColor, 'primary');
-    generateColorTones(secondaryColor, 'secondary');
-  }, [searchParams, primaryColor, secondaryColor]);
-
-  const generateColorTones = (color: string, prefix: string) => {
-    // Simple tone generation - in production you'd want more sophisticated color manipulation
-    document.documentElement.style.setProperty(`--${prefix}-light`, color + '33');
-    document.documentElement.style.setProperty(`--${prefix}-medium`, color + '66');
-    document.documentElement.style.setProperty(`--${prefix}-dark`, color + 'CC');
   };
 
   const handleThemeSwitch = () => {
@@ -58,88 +88,139 @@ export default function Home() {
     const newUrl = new URL(window.location.href);
     newUrl.searchParams.set('theme', newTheme);
     
-    // Send message to parent
     window.parent.postMessage({
       type: 'navigate',
       url: newUrl.toString(),
       theme: newTheme
     }, '*');
 
-    // Update local state
     setTheme(newTheme);
-    if (newTheme === 'ton') {
-      setPrimaryColor('#0098EA');
-      setSecondaryColor('#1AC8FF');
-    } else {
-      setPrimaryColor('#9945FF');
-      setSecondaryColor('#14F195');
-    }
   };
 
   return (
-    <div className="min-h-screen p-8 pb-20 sm:p-20">
-      <header className="flex justify-between items-center mb-8">
-        <div className="flex items-center gap-4">
-          {logoUrl ? (
-            <img src={logoUrl} alt="Logo" className="h-12 w-auto" />
-          ) : (
-            <div className="h-12 w-12 rounded-full bg-gradient-to-r from-[var(--primary-color)] to-[var(--secondary-color)]" />
-          )}
-          <h1 className="text-2xl font-bold">
-            {theme === 'solana' ? 'Solana' : 'TON'} Staking dApp
-          </h1>
-        </div>
-        <WalletConnection />
-      </header>
-
-      <main className="flex flex-col gap-8 max-w-4xl mx-auto">
-        <section className="bg-white dark:bg-gray-800 rounded-lg p-6 shadow-lg">
-          <h2 className="text-xl font-semibold mb-4">Staking Dashboard</h2>
-          <p className="text-gray-600 dark:text-gray-300 mb-4">
-            Connected to {theme === 'solana' ? 'Solana' : 'TON'} network
-          </p>
+    <div className="min-h-screen bg-background text-foreground p-6">
+      <div className="max-w-md mx-auto space-y-6">
+        
+        {/* Header */}
+        <div className="text-center">
+          <div className="flex items-center justify-center space-x-3 mb-4">
+            {logoUrl ? (
+              <img src={logoUrl} alt="Logo" className="h-8 w-8 rounded" />
+            ) : (
+              <div className="h-8 w-8 bg-white text-black rounded flex items-center justify-center font-bold text-sm">
+                {theme === 'solana' ? 'S' : 'T'}
+              </div>
+            )}
+            <h1 className="text-xl font-semibold">
+              {theme === 'solana' ? 'Solana' : 'TON'} Wallet
+            </h1>
+          </div>
           
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
-            <div className="bg-gray-50 dark:bg-gray-700 p-4 rounded">
-              <p className="text-sm text-gray-500 dark:text-gray-400">Total Staked</p>
-              <p className="text-2xl font-bold text-[var(--primary-color)]">0 {theme === 'solana' ? 'SOL' : 'TON'}</p>
-            </div>
-            <div className="bg-gray-50 dark:bg-gray-700 p-4 rounded">
-              <p className="text-sm text-gray-500 dark:text-gray-400">Rewards Earned</p>
-              <p className="text-2xl font-bold text-[var(--secondary-color)]">0 {theme === 'solana' ? 'SOL' : 'TON'}</p>
-            </div>
-            <div className="bg-gray-50 dark:bg-gray-700 p-4 rounded">
-              <p className="text-sm text-gray-500 dark:text-gray-400">APY</p>
-              <p className="text-2xl font-bold">7.5%</p>
-            </div>
-          </div>
-
-          <button 
+          <button
             onClick={handleThemeSwitch}
-            className="w-full md:w-auto px-6 py-2 bg-gradient-to-r from-[var(--primary-color)] to-[var(--secondary-color)] text-white rounded-lg hover:opacity-90 transition-opacity"
+            className="text-sm text-muted-foreground hover:text-foreground"
           >
-            Switch to {theme === 'solana' ? 'TON' : 'Solana'} Network
+            Switch to {theme === 'solana' ? 'TON' : 'Solana'}
           </button>
-        </section>
+        </div>
 
-        <section className="bg-white dark:bg-gray-800 rounded-lg p-6 shadow-lg">
-          <h3 className="text-lg font-semibold mb-4">Stake Your Tokens</h3>
-          <div className="flex flex-col gap-4">
-            <input
-              type="number"
-              placeholder={`Amount to stake (${theme === 'solana' ? 'SOL' : 'TON'})`}
-              className="w-full p-3 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700"
-            />
-            <button className="w-full p-3 bg-[var(--primary-color)] text-white rounded-lg hover:opacity-90 transition-opacity">
-              Stake Now
-            </button>
+        {/* Wallet Connection */}
+        <div className="bg-card border border-border rounded-lg p-6 text-center">
+          <WalletConnection />
+        </div>
+
+        {/* Wallet Info */}
+        {publicKey && (
+          <div className="bg-card border border-border rounded-lg p-6">
+            <h2 className="font-semibold mb-3">Wallet Info</h2>
+            <div className="space-y-2 text-sm">
+              <div className="flex justify-between">
+                <span className="text-muted-foreground">Address:</span>
+                <span className="font-mono">
+                  {publicKey.toBase58().slice(0, 6)}...{publicKey.toBase58().slice(-6)}
+                </span>
+              </div>
+              <div className="flex justify-between">
+                <span className="text-muted-foreground">Balance:</span>
+                <span className="font-semibold">
+                  {balance !== null ? `${balance.toFixed(4)} SOL` : 'Loading...'}
+                </span>
+              </div>
+            </div>
           </div>
-        </section>
-      </main>
+        )}
 
-      <footer className="mt-16 text-center text-sm text-gray-500 dark:text-gray-400">
-        <p>iFrame dApp POC - Testing wallet connections and security</p>
-      </footer>
+        {/* Transfer Form */}
+        {publicKey && (
+          <div className="bg-card border border-border rounded-lg p-6">
+            <h2 className="font-semibold mb-4">Send SOL</h2>
+            
+            <div className="space-y-4">
+              <div>
+                <label className="block text-sm font-medium mb-2">Recipient Address</label>
+                <input
+                  type="text"
+                  value={recipient}
+                  onChange={(e) => setRecipient(e.target.value)}
+                  placeholder="Enter wallet address"
+                  className="w-full p-3 bg-muted border border-border rounded-lg text-foreground focus:border-white focus:outline-none"
+                />
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium mb-2">Amount (SOL)</label>
+                <input
+                  type="number"
+                  value={amount}
+                  onChange={(e) => setAmount(e.target.value)}
+                  placeholder="0.0"
+                  step="0.001"
+                  className="w-full p-3 bg-muted border border-border rounded-lg text-foreground focus:border-white focus:outline-none"
+                />
+              </div>
+
+              <button
+                onClick={handleTransfer}
+                disabled={!recipient || !amount || isLoading}
+                className="w-full p-3 bg-success text-white rounded-lg font-medium hover:bg-success/90 disabled:bg-secondary disabled:text-muted-foreground disabled:cursor-not-allowed transition-colors"
+              >
+                {isLoading ? 'Sending...' : 'Send SOL'}
+              </button>
+
+              {message && (
+                <div className={`p-3 rounded-lg text-sm ${
+                  message.includes('✅') 
+                    ? 'bg-success/20 text-success border border-success/30' 
+                    : 'bg-danger/20 text-danger border border-danger/30'
+                }`}>
+                  {message}
+                </div>
+              )}
+            </div>
+          </div>
+        )}
+
+        {/* Connect Prompt */}
+        {!publicKey && (
+          <div className="bg-card border border-border rounded-lg p-6 text-center">
+            <p className="text-muted-foreground mb-4">
+              Connect your wallet to view balance and send transactions
+            </p>
+          </div>
+        )}
+      </div>
     </div>
+  );
+}
+
+export default function Home() {
+  return (
+    <Suspense fallback={
+      <div className="min-h-screen bg-background flex items-center justify-center">
+        <div className="text-muted-foreground">Loading...</div>
+      </div>
+    }>
+      <HomePage />
+    </Suspense>
   );
 }
