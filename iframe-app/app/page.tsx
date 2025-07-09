@@ -1,10 +1,15 @@
-'use client';
+"use client";
 
-import { useEffect, useState, Suspense } from 'react';
-import { useWallet, useConnection } from '@solana/wallet-adapter-react';
-import { LAMPORTS_PER_SOL, PublicKey, Transaction, SystemProgram } from '@solana/web3.js';
-import { useSearchParams } from 'next/navigation';
-import { WalletMultiButton } from '@solana/wallet-adapter-react-ui';
+import { useEffect, useState, Suspense } from "react";
+import { useWallet, useConnection } from "@solana/wallet-adapter-react";
+import {
+  LAMPORTS_PER_SOL,
+  PublicKey,
+  Transaction,
+  SystemProgram,
+} from "@solana/web3.js";
+import { useSearchParams } from "next/navigation";
+import { WalletMultiButton } from "@solana/wallet-adapter-react-ui";
 import {
   decodeWhitelabelConfig,
   applyWhitelabelConfig,
@@ -19,44 +24,47 @@ import {
   TabsContent,
   TabsList,
   TabsTrigger,
-  Button
-} from '@iframe-test/shared-components';
+  Button,
+} from "@iframe-test/shared-components";
 
 function HomePage() {
   const searchParams = useSearchParams();
   const { publicKey, sendTransaction, connected, wallet } = useWallet();
   const { connection } = useConnection();
-  
+
   const [mounted, setMounted] = useState(false);
   const [balance, setBalance] = useState<number | null>(null);
-  const [recipient, setRecipient] = useState('');
-  const [amount, setAmount] = useState('');
+  const [recipient, setRecipient] = useState("");
+  const [amount, setAmount] = useState("");
   const [isLoading, setIsLoading] = useState(false);
-  const [message, setMessage] = useState('');
+  const [message, setMessage] = useState("");
   const [transactions, setTransactions] = useState([
     {
-      signature: '5VfYJQKYGzGjdHHvv5YLRzTMZ8Mw9A7QKYt2w5VK4FN5K5Mw9A7QKYt2w5VK4FN5',
-      type: 'send' as const,
+      signature:
+        "5VfYJQKYGzGjdHHvv5YLRzTMZ8Mw9A7QKYt2w5VK4FN5K5Mw9A7QKYt2w5VK4FN5",
+      type: "send" as const,
       amount: 0.5,
       timestamp: new Date(Date.now() - 3600000),
-      status: 'confirmed' as const,
-      recipient: '7XgE5JvKYzGjdHHvv5YLRzTMZ8Mw9A7QKYt2w5VK4FN5'
+      status: "confirmed" as const,
+      recipient: "7XgE5JvKYzGjdHHvv5YLRzTMZ8Mw9A7QKYt2w5VK4FN5",
     },
     {
-      signature: '8VgF6KQKYGzGjdHHvv5YLRzTMZ8Mw9A7QKYt2w5VK4FN5K5Mw9A7QKYt2w5VK4FN5',
-      type: 'receive' as const,
+      signature:
+        "8VgF6KQKYGzGjdHHvv5YLRzTMZ8Mw9A7QKYt2w5VK4FN5K5Mw9A7QKYt2w5VK4FN5",
+      type: "receive" as const,
       amount: 1.2,
       timestamp: new Date(Date.now() - 7200000),
-      status: 'confirmed' as const,
+      status: "confirmed" as const,
     },
     {
-      signature: '9WhG7LRKYGzGjdHHvv5YLRzTMZ8Mw9A7QKYt2w5VK4FN5K5Mw9A7QKYt2w5VK4FN5',
-      type: 'send' as const,
+      signature:
+        "9WhG7LRKYGzGjdHHvv5YLRzTMZ8Mw9A7QKYt2w5VK4FN5K5Mw9A7QKYt2w5VK4FN5",
+      type: "send" as const,
       amount: 0.1,
       timestamp: new Date(Date.now() - 86400000),
-      status: 'pending' as const,
-      recipient: '2XhF8MvKYzGjdHHvv5YLRzTMZ8Mw9A7QKYt2w5VK4FN5'
-    }
+      status: "pending" as const,
+      recipient: "2XhF8MvKYzGjdHHvv5YLRzTMZ8Mw9A7QKYt2w5VK4FN5",
+    },
   ]);
 
   const portfolioData = {
@@ -64,25 +72,25 @@ function HomePage() {
     change24h: 5.67,
     tokens: [
       {
-        symbol: 'SOL',
-        name: 'Solana',
+        symbol: "SOL",
+        name: "Solana",
         balance: 12.5,
-        value: 2250.00,
+        value: 2250.0,
         change24h: 6.2,
-        percentage: 90.5
+        percentage: 90.5,
       },
       {
-        symbol: 'USDC',
-        name: 'USD Coin',
+        symbol: "USDC",
+        name: "USD Coin",
         balance: 236.75,
         value: 236.75,
         change24h: 0.01,
-        percentage: 9.5
-      }
-    ]
+        percentage: 9.5,
+      },
+    ],
   };
 
-  const [whitelabelConfig, setWhitelabelConfig] = useState(() => 
+  const [whitelabelConfig, setWhitelabelConfig] = useState(() =>
     decodeWhitelabelConfig(new URLSearchParams())
   );
 
@@ -92,7 +100,7 @@ function HomePage() {
 
   useEffect(() => {
     if (!mounted) return;
-    
+
     const config = decodeWhitelabelConfig(searchParams);
     setWhitelabelConfig(config);
     applyWhitelabelConfig(config);
@@ -103,8 +111,8 @@ function HomePage() {
       setBalance(null);
       return;
     }
-    
-    connection.getBalance(publicKey).then(balance => {
+
+    connection.getBalance(publicKey).then((balance) => {
       setBalance(balance / LAMPORTS_PER_SOL);
     });
   }, [publicKey, connection, mounted]);
@@ -112,17 +120,23 @@ function HomePage() {
   // Send wallet connection status to parent
   useEffect(() => {
     if (!mounted) return;
-    
+
     if (connected && publicKey) {
-      window.parent.postMessage({
-        type: 'wallet-connected',
-        wallet: wallet?.adapter.name,
-        publicKey: publicKey.toBase58()
-      }, '*');
+      window.parent.postMessage(
+        {
+          type: "wallet-connected",
+          wallet: wallet?.adapter.name,
+          publicKey: publicKey.toBase58(),
+        },
+        "*"
+      );
     } else {
-      window.parent.postMessage({
-        type: 'wallet-disconnected'
-      }, '*');
+      window.parent.postMessage(
+        {
+          type: "wallet-disconnected",
+        },
+        "*"
+      );
     }
   }, [connected, publicKey, wallet, mounted]);
 
@@ -130,7 +144,7 @@ function HomePage() {
     if (!publicKey || !recipient || !amount) return;
 
     setIsLoading(true);
-    setMessage('');
+    setMessage("");
 
     try {
       const recipientPubkey = new PublicKey(recipient);
@@ -146,47 +160,46 @@ function HomePage() {
 
       const signature = await sendTransaction(transaction, connection);
       setMessage(`✅ Transfer successful: ${signature.slice(0, 8)}...`);
-      
+
       // Add to transaction history
       const newTransaction = {
         signature,
-        type: 'send' as const,
+        type: "send" as const,
         amount: parseFloat(amount),
         timestamp: new Date(),
-        status: 'confirmed' as const,
-        recipient
+        status: "confirmed" as const,
+        recipient,
       };
-      setTransactions(prev => [newTransaction, ...prev]);
-      
+      setTransactions((prev) => [newTransaction, ...prev]);
+
       // Send message to parent
-      window.parent.postMessage({
-        type: 'transaction-success',
-        signature
-      }, '*');
-      
+      window.parent.postMessage(
+        {
+          type: "transaction-success",
+          signature,
+        },
+        "*"
+      );
+
       // Clear form and refresh balance
-      setRecipient('');
-      setAmount('');
+      setRecipient("");
+      setAmount("");
       setTimeout(() => {
         if (publicKey) {
-          connection.getBalance(publicKey).then(balance => {
+          connection.getBalance(publicKey).then((balance) => {
             setBalance(balance / LAMPORTS_PER_SOL);
           });
         }
       }, 1000);
-
     } catch (error) {
-      setMessage(`❌ Transfer failed: ${error instanceof Error ? error.message : 'Unknown error'}`);
+      setMessage(
+        `❌ Transfer failed: ${
+          error instanceof Error ? error.message : "Unknown error"
+        }`
+      );
     } finally {
       setIsLoading(false);
     }
-  };
-
-  const handleThemeSwitch = () => {
-    // For whitelabel iframe, theme switching is handled by parent
-    window.parent.postMessage({
-      type: 'toggle-theme'
-    }, '*');
   };
 
   if (!mounted) {
@@ -205,7 +218,6 @@ function HomePage() {
     <div className="min-h-screen bg-background text-foreground">
       {/* Mobile-First Responsive Layout */}
       <div className="container mx-auto p-4 sm:p-6 lg:p-8 max-w-7xl">
-        
         {/* Header with Settings */}
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6">
           <div className="text-center">
@@ -239,7 +251,7 @@ function HomePage() {
 
         {/* Wallet Connection Section */}
         <div className="mb-6">
-          <WalletConnection 
+          <WalletConnection
             connected={connected}
             walletName={wallet?.adapter.name}
           >
@@ -253,7 +265,6 @@ function HomePage() {
         ) : (
           /* Main Dashboard - Connected State */
           <div className="space-y-6">
-            
             {/* Portfolio Overview - Full Width on Mobile, Side Panel on Desktop */}
             <div className="lg:hidden">
               <PortfolioOverview
@@ -265,12 +276,10 @@ function HomePage() {
 
             {/* Main Content Grid */}
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-              
               {/* Left Column - Main Actions */}
               <div className="lg:col-span-2 space-y-6">
-                
                 {/* Wallet Info */}
-                <WalletInfo 
+                <WalletInfo
                   publicKey={publicKey.toBase58()}
                   balance={balance}
                 />
@@ -298,7 +307,7 @@ function HomePage() {
                         transactions={transactions}
                         onRefresh={() => {
                           // Mock refresh
-                          console.log('Refreshing transactions...');
+                          console.log("Refreshing transactions...");
                         }}
                       />
                     </TabsContent>
@@ -316,12 +325,12 @@ function HomePage() {
                     onAmountChange={setAmount}
                     onSubmit={handleTransfer}
                   />
-                  
+
                   <TransactionHistory
                     transactions={transactions}
                     onRefresh={() => {
                       // Mock refresh
-                      console.log('Refreshing transactions...');
+                      console.log("Refreshing transactions...");
                     }}
                   />
                 </div>
@@ -345,14 +354,19 @@ function HomePage() {
 
 export default function Home() {
   return (
-    <Suspense fallback={
-      <div className="min-h-screen flex items-center justify-center" style={{
-        backgroundColor: 'var(--color-background, #ffffff)',
-        color: 'var(--color-text, #000000)'
-      }}>
-        <div>Loading...</div>
-      </div>
-    }>
+    <Suspense
+      fallback={
+        <div
+          className="min-h-screen flex items-center justify-center"
+          style={{
+            backgroundColor: "var(--color-background, #ffffff)",
+            color: "var(--color-text, #000000)",
+          }}
+        >
+          <div>Loading...</div>
+        </div>
+      }
+    >
       <HomePage />
     </Suspense>
   );

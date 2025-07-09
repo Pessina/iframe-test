@@ -15,11 +15,9 @@ import {
 import {
   Monitor,
   Smartphone,
-  ExternalLink,
   CheckCircle,
   ArrowUpRight,
   Copy,
-  Sparkles,
 } from "lucide-react";
 
 export default function Home() {
@@ -49,7 +47,7 @@ export default function Home() {
     const baseUrl =
       process.env.NODE_ENV === "development"
         ? "http://localhost:3000"
-        : "/iframe-app";
+        : process.env.NEXT_PUBLIC_IFRAME_URL || "/iframe-app";
 
     setIframeUrl(`${baseUrl}?${params.toString()}`);
 
@@ -233,7 +231,10 @@ export default function Home() {
               </CardHeader>
               <CardContent className="p-0">
                 <div className="bg-slate-100 p-4 flex justify-center">
-                  <div className="bg-white rounded-lg shadow-lg overflow-hidden border" style={{ width: "375px", height: "600px" }}>
+                  <div
+                    className="bg-white rounded-lg shadow-lg overflow-hidden border"
+                    style={{ width: "375px", height: "600px" }}
+                  >
                     {iframeUrl && (
                       <iframe
                         src={iframeUrl}
