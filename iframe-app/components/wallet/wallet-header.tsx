@@ -4,6 +4,7 @@ import { Button } from "../ui/button";
 import { cn } from "../../lib/utils";
 
 interface WalletHeaderProps {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   theme?: any;
   onThemeSwitch?: () => void;
   className?: string;

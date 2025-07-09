@@ -10,8 +10,8 @@ This document explains how to deploy the iframe-test dApps to Vercel.
 
 ## Current Working Deployments
 
-✅ **iframe-app**: https://iframe-b13h5xasr-fspessinas-projects.vercel.app  
-✅ **parent-app**: https://parent-br6116i0n-fspessinas-projects.vercel.app
+✅ **iframe-app**: https://iframe-fgeh2c2lr-fspessinas-projects.vercel.app  
+✅ **parent-app**: https://parent-edhemxxrd-fspessinas-projects.vercel.app
 
 ## Deployment Process
 

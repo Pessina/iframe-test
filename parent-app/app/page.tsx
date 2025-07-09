@@ -1,17 +1,17 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { useWhitelabel } from "../hooks/useWhitelabel";
+import { WhitelabelControls } from "../components/whitelabel/whitelabel-controls";
 import {
-  useWhitelabel,
-  WhitelabelControls,
   Card,
   CardContent,
   CardDescription,
   CardHeader,
   CardTitle,
-  Badge,
-  Button,
-} from "@iframe-test/shared-components";
+} from "../components/ui/card";
+import { Badge } from "../components/ui/badge";
+import { Button } from "../components/ui/button";
 import {
   Monitor,
   Smartphone,
@@ -47,7 +47,7 @@ export default function Home() {
     const baseUrl =
       process.env.NODE_ENV === "development"
         ? "http://localhost:3000"
-        : process.env.NEXT_PUBLIC_IFRAME_URL || "/iframe-app";
+        : "https://iframe-do8t2bj4g-fspessinas-projects.vercel.app";
 
     setIframeUrl(`${baseUrl}?${params.toString()}`);
 

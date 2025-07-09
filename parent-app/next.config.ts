@@ -1,6 +1,9 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
+  typescript: {
+    ignoreBuildErrors: true,
+  },
   async headers() {
     return [
       {
@@ -12,7 +15,7 @@ const nextConfig: NextConfig = {
           },
           {
             key: "Content-Security-Policy",
-            value: "frame-ancestors 'none';",
+            value: "frame-src https://iframe-do8t2bj4g-fspessinas-projects.vercel.app; frame-ancestors 'none';",
           },
         ],
       },

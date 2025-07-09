@@ -13,19 +13,15 @@ import { WalletMultiButton } from "@solana/wallet-adapter-react-ui";
 import {
   decodeWhitelabelConfig,
   applyWhitelabelConfig,
-  WalletInfo,
-  TransferForm,
-  WalletConnection,
-  ConnectPrompt,
-  TransactionHistory,
-  PortfolioOverview,
-  SettingsModal,
-  Tabs,
-  TabsContent,
-  TabsList,
-  TabsTrigger,
-  Button,
-} from "@iframe-test/shared-components";
+} from "../lib/whitelabel";
+import { WalletInfo } from "../components/wallet/wallet-info";
+import { TransferForm } from "../components/wallet/transfer-form";
+import { WalletConnection } from "../components/wallet/wallet-connection";
+import { ConnectPrompt } from "../components/wallet/connect-prompt";
+import { TransactionHistory } from "../components/wallet/transaction-history";
+import { PortfolioOverview } from "../components/wallet/portfolio-overview";
+import { SettingsModal } from "../components/wallet/settings-modal";
+import { Button } from "../components/ui/button";
 
 function HomePage() {
   const searchParams = useSearchParams();
@@ -284,34 +280,24 @@ function HomePage() {
                   balance={balance}
                 />
 
-                {/* Tabbed Interface for Mobile, Separate Cards for Desktop */}
-                <div className="md:hidden">
-                  <Tabs defaultValue="transfer" className="w-full">
-                    <TabsList className="grid w-full grid-cols-2">
-                      <TabsTrigger value="transfer">Transfer</TabsTrigger>
-                      <TabsTrigger value="history">History</TabsTrigger>
-                    </TabsList>
-                    <TabsContent value="transfer" className="mt-4">
-                      <TransferForm
-                        recipient={recipient}
-                        amount={amount}
-                        isLoading={isLoading}
-                        message={message}
-                        onRecipientChange={setRecipient}
-                        onAmountChange={setAmount}
-                        onSubmit={handleTransfer}
-                      />
-                    </TabsContent>
-                    <TabsContent value="history" className="mt-4">
-                      <TransactionHistory
-                        transactions={transactions}
-                        onRefresh={() => {
-                          // Mock refresh
-                          console.log("Refreshing transactions...");
-                        }}
-                      />
-                    </TabsContent>
-                  </Tabs>
+                {/* Mobile Layout - Separate Cards */}
+                <div className="md:hidden space-y-6">
+                  <TransferForm
+                    recipient={recipient}
+                    amount={amount}
+                    isLoading={isLoading}
+                    message={message}
+                    onRecipientChange={setRecipient}
+                    onAmountChange={setAmount}
+                    onSubmit={handleTransfer}
+                  />
+                  <TransactionHistory
+                    transactions={transactions}
+                    onRefresh={() => {
+                      // Mock refresh
+                      console.log("Refreshing transactions...");
+                    }}
+                  />
                 </div>
 
                 {/* Desktop Layout - Separate Cards */}
