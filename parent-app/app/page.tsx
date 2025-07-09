@@ -47,7 +47,7 @@ export default function Home() {
     const baseUrl =
       process.env.NODE_ENV === "development"
         ? "http://localhost:3000"
-        : "https://iframe-do8t2bj4g-fspessinas-projects.vercel.app";
+        : "https://iframe-app-phi.vercel.app";
 
     setIframeUrl(`${baseUrl}?${params.toString()}`);
 

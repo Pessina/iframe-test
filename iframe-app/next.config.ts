@@ -15,7 +15,8 @@ const nextConfig: NextConfig = {
           },
           {
             key: "Content-Security-Policy",
-            value: "frame-ancestors https://parent-jd2k99y5h-fspessinas-projects.vercel.app localhost:3001;",
+            value:
+              "frame-ancestors https://parent-app-tau.vercel.app localhost:3001;",
           },
         ],
       },

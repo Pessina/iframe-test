@@ -15,7 +15,8 @@ const nextConfig: NextConfig = {
           },
           {
             key: "Content-Security-Policy",
-            value: "frame-src https://iframe-do8t2bj4g-fspessinas-projects.vercel.app; frame-ancestors 'none';",
+            value:
+              "frame-src https://iframe-app-phi.vercel.app http://localhost:3000; frame-ancestors 'self';",
           },
         ],
       },

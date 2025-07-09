@@ -3,20 +3,13 @@
   "version": "1.0.0",
   "private": true,
   "scripts": {
-    "dev": "concurrently \"pnpm --filter iframe-app dev\" \"pnpm --filter parent-app dev\"",
-    "build": "pnpm --filter shared-components build && pnpm --filter iframe-app build && pnpm --filter parent-app build",
-    "build:components": "pnpm --filter shared-components build",
-    "deploy:prepare": "node scripts/deploy.js",
-    "deploy:iframe": "cd deploy/iframe-app-deploy && vercel --prod --yes",
-    "deploy:parent": "cd deploy/parent-app-deploy && vercel --prod --yes",
-    "deploy": "pnpm run deploy:prepare && pnpm run deploy:iframe && pnpm run deploy:parent"
+    "deploy:iframe": "cd iframe-app && pnpm run deploy",
+    "deploy:parent": "cd parent-app && pnpm run deploy",
+    "deploy": "pnpm run deploy:iframe && pnpm run deploy:parent"
   },
   "workspaces": [
     "shared-components",
-    "iframe-app", 
+    "iframe-app",
     "parent-app"
-  ],
-  "devDependencies": {
-    "concurrently": "^8.2.2"
-  }
+  ]
 }
