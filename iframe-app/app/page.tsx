@@ -227,7 +227,7 @@ function HomePage() {
                   height={32}
                 />
               ) : (
-                <div className="h-8 w-8 bg-[var(--color-primary,#2563eb)] text-white rounded flex items-center justify-center font-bold text-sm">
+                <div className="h-8 w-8 bg-primary text-primary-foreground rounded flex items-center justify-center font-bold text-sm">
                   W
                 </div>
               )}
@@ -342,13 +342,7 @@ export default function Home() {
   return (
     <Suspense
       fallback={
-        <div
-          className="min-h-screen flex items-center justify-center"
-          style={{
-            backgroundColor: "var(--color-background, #ffffff)",
-            color: "var(--color-text, #000000)",
-          }}
-        >
+        <div className="min-h-screen flex items-center justify-center bg-background text-foreground">
           <div>Loading...</div>
         </div>
       }

@@ -24,44 +24,11 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
-      <head>
-        <script
-          dangerouslySetInnerHTML={{
-            __html: `
-              // Suppress cross-origin errors in iframe
-              (function() {
-                // Handle global errors
-                window.addEventListener('error', function(e) {
-                  if (e.message && 
-                      (e.message.includes('cross-origin') || 
-                       e.message.includes('Blocked a frame') ||
-                       e.message.includes('origin'))) {
-                    e.preventDefault();
-                    return false;
-                  }
-                });
-                
-                // Handle unhandled promise rejections
-                window.addEventListener('unhandledrejection', function(e) {
-                  if (e.reason && e.reason.message &&
-                      (e.reason.message.includes('cross-origin') ||
-                       e.reason.message.includes('Blocked a frame') ||
-                       e.reason.message.includes('origin'))) {
-                    e.preventDefault();
-                  }
-                });
-              })();
-            `,
-          }}
-        />
-      </head>
+    <html lang="en" className="h-full">
       <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
+        className={`${geistSans.variable} ${geistMono.variable} antialiased min-h-screen bg-background text-foreground`}
       >
-        <WalletProvider>
-          {children}
-        </WalletProvider>
+        <WalletProvider>{children}</WalletProvider>
       </body>
     </html>
   );
