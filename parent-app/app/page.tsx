@@ -18,7 +18,9 @@ import {
   CheckCircle,
   ArrowUpRight,
   Copy,
+  ExternalLink,
 } from "lucide-react";
+import Link from "next/link";
 
 export default function Home() {
   const [mounted, setMounted] = useState(false);
@@ -113,6 +115,12 @@ export default function Home() {
                   <Badge variant="outline" className="text-xs">
                     {whitelabel.config.brand?.name || "Default"}
                   </Badge>
+                  <Link href="/iframe">
+                    <Button variant="outline" size="sm" className="flex items-center gap-2">
+                      <ExternalLink className="h-4 w-4" />
+                      Custom Iframe
+                    </Button>
+                  </Link>
                 </div>
               </div>
               <CardDescription>

@@ -4,7 +4,13 @@ import { WHITELABEL_THEMES } from "../../lib/whitelabel";
 import { Button } from "../ui/button";
 import { Input } from "../ui/input";
 import { Label } from "../ui/label";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "../ui/card";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "../ui/card";
 import { Badge } from "../ui/badge";
 import { Palette, Settings, Code2, RotateCcw } from "lucide-react";
 
@@ -15,12 +21,10 @@ interface WhitelabelControlsProps {
 
 export const WhitelabelControls: React.FC<WhitelabelControlsProps> = ({
   whitelabel,
-  className = ""
+  className = "",
 }) => {
   return (
     <div className={`space-y-6 ${className}`}>
-      
-      {/* Quick Presets */}
       <Card>
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
@@ -40,7 +44,7 @@ export const WhitelabelControls: React.FC<WhitelabelControlsProps> = ({
                 onClick={() => whitelabel.setPreset(preset)}
                 className="h-auto p-4 flex flex-col items-center gap-2"
               >
-                <div 
+                <div
                   className="w-8 h-8 rounded-full border-2"
                   style={{ backgroundColor: config.colors?.primary }}
                 />
@@ -51,16 +55,13 @@ export const WhitelabelControls: React.FC<WhitelabelControlsProps> = ({
         </CardContent>
       </Card>
 
-      {/* Brand Identity */}
       <Card>
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
             <Settings className="h-5 w-5" />
             Brand Identity
           </CardTitle>
-          <CardDescription>
-            Customize your brand name and logo
-          </CardDescription>
+          <CardDescription>Customize your brand name and logo</CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -85,11 +86,12 @@ export const WhitelabelControls: React.FC<WhitelabelControlsProps> = ({
               />
             </div>
           </div>
-          
-          {/* Preview */}
+
           {(whitelabel.config.brand?.name || whitelabel.config.brand?.logo) && (
             <div className="mt-4 p-4 border rounded-lg bg-muted/50">
-              <Label className="text-xs text-muted-foreground mb-2 block">PREVIEW</Label>
+              <Label className="text-xs text-muted-foreground mb-2 block">
+                PREVIEW
+              </Label>
               <div className="flex items-center gap-3">
                 {whitelabel.config.brand?.logo ? (
                   <img
@@ -97,19 +99,22 @@ export const WhitelabelControls: React.FC<WhitelabelControlsProps> = ({
                     alt="Logo preview"
                     className="w-8 h-8 rounded object-cover"
                     onError={(e) => {
-                      e.currentTarget.style.display = 'none';
+                      e.currentTarget.style.display = "none";
                     }}
                   />
                 ) : (
-                  <div 
+                  <div
                     className="w-8 h-8 rounded flex items-center justify-center text-white text-sm font-bold"
-                    style={{ backgroundColor: whitelabel.config.colors?.primary || '#2563eb' }}
+                    style={{
+                      backgroundColor:
+                        whitelabel.config.colors?.primary || "#2563eb",
+                    }}
                   >
-                    {whitelabel.config.brand?.name?.[0]?.toUpperCase() || 'W'}
+                    {whitelabel.config.brand?.name?.[0]?.toUpperCase() || "W"}
                   </div>
                 )}
                 <span className="font-medium">
-                  {whitelabel.config.brand?.name || 'Your Brand'}
+                  {whitelabel.config.brand?.name || "Your Brand"}
                 </span>
               </div>
             </div>
@@ -117,13 +122,10 @@ export const WhitelabelControls: React.FC<WhitelabelControlsProps> = ({
         </CardContent>
       </Card>
 
-      {/* Colors */}
       <Card>
         <CardHeader>
           <CardTitle>Colors</CardTitle>
-          <CardDescription>
-            Customize your brand colors
-          </CardDescription>
+          <CardDescription>Customize your brand colors</CardDescription>
         </CardHeader>
         <CardContent>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
@@ -134,18 +136,22 @@ export const WhitelabelControls: React.FC<WhitelabelControlsProps> = ({
                   id="primary-color"
                   type="color"
                   value={whitelabel.config.colors?.primary || "#2563eb"}
-                  onChange={(e) => whitelabel.setColors({ primary: e.target.value })}
+                  onChange={(e) =>
+                    whitelabel.setColors({ primary: e.target.value })
+                  }
                   className="w-12 h-10 p-1 rounded"
                 />
                 <Input
                   type="text"
                   value={whitelabel.config.colors?.primary || "#2563eb"}
-                  onChange={(e) => whitelabel.setColors({ primary: e.target.value })}
+                  onChange={(e) =>
+                    whitelabel.setColors({ primary: e.target.value })
+                  }
                   className="flex-1 font-mono text-sm"
                 />
               </div>
             </div>
-            
+
             <div className="space-y-2">
               <Label htmlFor="background-color">Background</Label>
               <div className="flex items-center gap-2">
@@ -153,18 +159,22 @@ export const WhitelabelControls: React.FC<WhitelabelControlsProps> = ({
                   id="background-color"
                   type="color"
                   value={whitelabel.config.colors?.background || "#ffffff"}
-                  onChange={(e) => whitelabel.setColors({ background: e.target.value })}
+                  onChange={(e) =>
+                    whitelabel.setColors({ background: e.target.value })
+                  }
                   className="w-12 h-10 p-1 rounded"
                 />
                 <Input
                   type="text"
                   value={whitelabel.config.colors?.background || "#ffffff"}
-                  onChange={(e) => whitelabel.setColors({ background: e.target.value })}
+                  onChange={(e) =>
+                    whitelabel.setColors({ background: e.target.value })
+                  }
                   className="flex-1 font-mono text-sm"
                 />
               </div>
             </div>
-            
+
             <div className="space-y-2">
               <Label htmlFor="text-color">Text Color</Label>
               <div className="flex items-center gap-2">
@@ -172,31 +182,40 @@ export const WhitelabelControls: React.FC<WhitelabelControlsProps> = ({
                   id="text-color"
                   type="color"
                   value={whitelabel.config.colors?.text || "#000000"}
-                  onChange={(e) => whitelabel.setColors({ text: e.target.value })}
+                  onChange={(e) =>
+                    whitelabel.setColors({ text: e.target.value })
+                  }
                   className="w-12 h-10 p-1 rounded"
                 />
                 <Input
                   type="text"
                   value={whitelabel.config.colors?.text || "#000000"}
-                  onChange={(e) => whitelabel.setColors({ text: e.target.value })}
+                  onChange={(e) =>
+                    whitelabel.setColors({ text: e.target.value })
+                  }
                   className="flex-1 font-mono text-sm"
                 />
               </div>
             </div>
           </div>
-          
-          {/* Color Preview */}
+
           <div className="mt-4 p-4 border rounded-lg">
-            <Label className="text-xs text-muted-foreground mb-2 block">COLOR PREVIEW</Label>
-            <div 
+            <Label className="text-xs text-muted-foreground mb-2 block">
+              COLOR PREVIEW
+            </Label>
+            <div
               className="p-4 rounded-lg"
-              style={{ 
-                backgroundColor: whitelabel.config.colors?.background || '#ffffff',
-                color: whitelabel.config.colors?.text || '#000000'
+              style={{
+                backgroundColor:
+                  whitelabel.config.colors?.background || "#ffffff",
+                color: whitelabel.config.colors?.text || "#000000",
               }}
             >
-              <Button 
-                style={{ backgroundColor: whitelabel.config.colors?.primary || '#2563eb' }}
+              <Button
+                style={{
+                  backgroundColor:
+                    whitelabel.config.colors?.primary || "#2563eb",
+                }}
                 className="text-white"
               >
                 Primary Button
@@ -207,7 +226,6 @@ export const WhitelabelControls: React.FC<WhitelabelControlsProps> = ({
         </CardContent>
       </Card>
 
-      {/* Style Options */}
       <Card>
         <CardHeader>
           <CardTitle>Style Options</CardTitle>
@@ -221,7 +239,9 @@ export const WhitelabelControls: React.FC<WhitelabelControlsProps> = ({
               <Label>Theme Mode</Label>
               <div className="grid grid-cols-2 gap-2">
                 <Button
-                  variant={whitelabel.config.theme === "light" ? "default" : "outline"}
+                  variant={
+                    whitelabel.config.theme === "light" ? "default" : "outline"
+                  }
                   size="sm"
                   onClick={() => whitelabel.setTheme("light")}
                   className="justify-start"
@@ -229,7 +249,9 @@ export const WhitelabelControls: React.FC<WhitelabelControlsProps> = ({
                   ☀️ Light
                 </Button>
                 <Button
-                  variant={whitelabel.config.theme === "dark" ? "default" : "outline"}
+                  variant={
+                    whitelabel.config.theme === "dark" ? "default" : "outline"
+                  }
                   size="sm"
                   onClick={() => whitelabel.setTheme("dark")}
                   className="justify-start"
@@ -238,7 +260,7 @@ export const WhitelabelControls: React.FC<WhitelabelControlsProps> = ({
                 </Button>
               </div>
             </div>
-            
+
             <div className="space-y-2">
               <Label>Border Radius</Label>
               <div className="grid grid-cols-2 gap-2">
@@ -246,11 +268,15 @@ export const WhitelabelControls: React.FC<WhitelabelControlsProps> = ({
                   { value: "0px", label: "None" },
                   { value: "4px", label: "Small" },
                   { value: "8px", label: "Medium" },
-                  { value: "12px", label: "Large" }
+                  { value: "12px", label: "Large" },
                 ].map((option) => (
                   <Button
                     key={option.value}
-                    variant={whitelabel.config.borderRadius === option.value ? "default" : "outline"}
+                    variant={
+                      whitelabel.config.borderRadius === option.value
+                        ? "default"
+                        : "outline"
+                    }
                     size="sm"
                     onClick={() => whitelabel.setBorderRadius(option.value)}
                     className="text-xs"
@@ -264,7 +290,6 @@ export const WhitelabelControls: React.FC<WhitelabelControlsProps> = ({
         </CardContent>
       </Card>
 
-      {/* Integration */}
       <Card>
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
@@ -280,26 +305,28 @@ export const WhitelabelControls: React.FC<WhitelabelControlsProps> = ({
             <div className="flex items-center justify-between">
               <Label>URL Parameters</Label>
               <Badge variant="secondary" className="text-xs">
-                {whitelabel.toUrlParams().toString().split('&').length} params
+                {whitelabel.toUrlParams().toString().split("&").length} params
               </Badge>
             </div>
             <div className="relative">
               <pre className="text-xs bg-muted p-3 rounded-lg overflow-x-auto font-mono">
-                {whitelabel.toUrlParams().toString().split('&').join('\n&')}
+                {whitelabel.toUrlParams().toString().split("&").join("\n&")}
               </pre>
               <Button
                 size="sm"
                 variant="outline"
                 className="absolute top-2 right-2"
                 onClick={() => {
-                  navigator.clipboard.writeText(whitelabel.toUrlParams().toString());
+                  navigator.clipboard.writeText(
+                    whitelabel.toUrlParams().toString()
+                  );
                 }}
               >
                 Copy
               </Button>
             </div>
           </div>
-          
+
           <div className="flex gap-2">
             <Button
               variant="outline"
